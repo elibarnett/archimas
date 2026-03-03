@@ -9,25 +9,22 @@ interface PinLayerProps {
   pins: PinWithTags[];
   imageWidth: number;
   imageHeight: number;
-  filterTagId?: string | null;
+  filterTagIds?: string[];
 }
 
 export function PinLayer({
   pins,
   imageWidth,
   imageHeight,
-  filterTagId,
+  filterTagIds,
 }: PinLayerProps) {
   const selectedPinId = useCanvasStore((s) => s.selectedPinId);
   const setSelectedPinId = useCanvasStore((s) => s.setSelectedPinId);
 
-  // Filter by tag if active
-  const filtered = filterTagId
-    ? pins.filter((p) => p.tags.some((t) => t.id === filterTagId))
-    : pins;
+  const hasActiveFilter = filterTagIds && filterTagIds.length > 0;
 
   // Render selected pin last so it appears on top
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = [...pins].sort((a, b) => {
     if (a.id === selectedPinId) return 1;
     if (b.id === selectedPinId) return -1;
     return 0;
@@ -35,16 +32,23 @@ export function PinLayer({
 
   return (
     <Layer listening>
-      {sorted.map((pin) => (
-        <PinMarker
-          key={pin.id}
-          pin={pin}
-          imageWidth={imageWidth}
-          imageHeight={imageHeight}
-          isSelected={pin.id === selectedPinId}
-          onSelect={setSelectedPinId}
-        />
-      ))}
+      {sorted.map((pin) => {
+        const matchesFilter = hasActiveFilter
+          ? pin.tags.some((t) => filterTagIds.includes(t.id))
+          : true;
+
+        return (
+          <PinMarker
+            key={pin.id}
+            pin={pin}
+            imageWidth={imageWidth}
+            imageHeight={imageHeight}
+            isSelected={pin.id === selectedPinId}
+            onSelect={setSelectedPinId}
+            opacity={hasActiveFilter && !matchesFilter ? 0.2 : 1}
+          />
+        );
+      })}
     </Layer>
   );
 }

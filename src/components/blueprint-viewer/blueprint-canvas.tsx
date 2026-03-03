@@ -12,8 +12,9 @@ interface BlueprintCanvasProps {
   width: number | null;
   height: number | null;
   pins?: PinWithTags[];
-  filterTagId?: string | null;
+  filterTagIds?: string[];
   onPinPlace?: (pos: { x: number; y: number }) => void;
+  readOnly?: boolean;
 }
 
 export function BlueprintCanvas({
@@ -21,8 +22,9 @@ export function BlueprintCanvas({
   width: imgWidth,
   height: imgHeight,
   pins = [],
-  filterTagId,
+  filterTagIds,
   onPinPlace,
+  readOnly = false,
 }: BlueprintCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
@@ -155,7 +157,7 @@ export function BlueprintCanvas({
   const iw = imgWidth ?? image?.naturalWidth ?? 0;
   const ih = imgHeight ?? image?.naturalHeight ?? 0;
 
-  const isPinMode = activeTool === "pin";
+  const isPinMode = !readOnly && activeTool === "pin";
 
   return (
     <div ref={containerRef} className="h-full w-full">
@@ -171,8 +173,8 @@ export function BlueprintCanvas({
           draggable={!isPinMode}
           onWheel={handleWheel}
           onDragEnd={handleDragEnd}
-          onClick={handleStageClick}
-          onTap={handleStageClick}
+          onClick={readOnly ? undefined : handleStageClick}
+          onTap={readOnly ? undefined : handleStageClick}
           className={isPinMode ? "cursor-crosshair" : "cursor-grab active:cursor-grabbing"}
         >
           <Layer>
@@ -184,7 +186,7 @@ export function BlueprintCanvas({
               pins={pins}
               imageWidth={iw}
               imageHeight={ih}
-              filterTagId={filterTagId}
+              filterTagIds={filterTagIds}
             />
           )}
         </Stage>

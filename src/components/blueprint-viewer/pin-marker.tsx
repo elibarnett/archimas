@@ -14,6 +14,7 @@ interface PinMarkerProps {
   imageHeight: number;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  opacity?: number;
 }
 
 export function PinMarker({
@@ -22,6 +23,7 @@ export function PinMarker({
   imageHeight,
   isSelected,
   onSelect,
+  opacity = 1,
 }: PinMarkerProps) {
   const zoom = useCanvasStore((s) => s.zoom);
   const activeTool = useCanvasStore((s) => s.activeTool);
@@ -67,6 +69,7 @@ export function PinMarker({
       y={y}
       scaleX={scale}
       scaleY={scale}
+      opacity={opacity}
       draggable={isDraggable}
       onDragEnd={handleDragEnd}
       onClick={handleClick}

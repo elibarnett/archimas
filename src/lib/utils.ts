@@ -36,3 +36,23 @@ export function getRelativeTime(dateStr: string): string {
   if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
+
+export function formatDateShort(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  if (date.getFullYear() !== now.getFullYear()) {
+    opts.year = "numeric";
+  }
+  return date.toLocaleDateString("en-US", opts);
+}
+
+export function formatDateRange(
+  from: string | null,
+  to: string | null
+): string {
+  if (from && to) return `${formatDateShort(from)} – ${formatDateShort(to)}`;
+  if (from) return `Since ${formatDateShort(from)}`;
+  if (to) return `Until ${formatDateShort(to)}`;
+  return "All dates";
+}

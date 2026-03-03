@@ -55,7 +55,7 @@ export function BlueprintViewerShell({
   const [pinDocuments, setPinDocuments] = useState<DocumentWithTags[]>([]);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [docRefreshKey, setDocRefreshKey] = useState(0);
-  const [filterTagId, setFilterTagId] = useState<string | null>(null);
+  const [filterTagIds, setFilterTagIds] = useState<string[]>([]);
 
   const selectedPin = useMemo(
     () => pins.find((p) => p.id === selectedPinId) ?? null,
@@ -161,7 +161,7 @@ export function BlueprintViewerShell({
         updatedAt={blueprint.updated_at}
       />
 
-      <BlueprintTagFilter tags={tags} onTagFilter={setFilterTagId} />
+      <BlueprintTagFilter tags={tags} onTagFilter={setFilterTagIds} />
 
       {/* Canvas */}
       <div className="relative flex-1 overflow-hidden">
@@ -170,7 +170,7 @@ export function BlueprintViewerShell({
           width={blueprint.width}
           height={blueprint.height}
           pins={pins}
-          filterTagId={filterTagId}
+          filterTagIds={filterTagIds}
           onPinPlace={handlePinPlace}
         />
 
