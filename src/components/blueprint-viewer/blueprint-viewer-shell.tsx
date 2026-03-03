@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Navigation } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { BlueprintViewerHeader } from "./blueprint-viewer-header";
 import { BlueprintTagFilter } from "./blueprint-tag-filter";
 import { BlueprintCanvas } from "./blueprint-canvas";
@@ -75,16 +73,6 @@ export function BlueprintViewerShell({
 
         {/* Floating controls */}
         <ZoomControls />
-
-        {/* Reset view button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-20 left-4 h-10 w-10 rounded-xl bg-card shadow-lg ring-1 ring-border/50"
-          onClick={resetViewport}
-        >
-          <Navigation className="h-4 w-4" />
-        </Button>
       </div>
 
       <BlueprintBottomNav />

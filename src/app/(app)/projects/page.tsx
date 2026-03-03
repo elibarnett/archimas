@@ -13,15 +13,15 @@ export default async function ProjectsPage() {
   const supabase = await createClient();
   const { data: projects } = await supabase
     .from("projects")
-    .select("*")
+    .select("*, blueprints(file_path, mime_type)")
     .order("updated_at", { ascending: false });
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col min-h-[100dvh]">
       {/* Header */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4">
         <div className="flex items-center gap-3">
-          <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="-ml-1 hidden md:flex" />
           <span className="text-base font-semibold">Projects</span>
         </div>
         <div className="flex items-center gap-2">

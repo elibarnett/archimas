@@ -33,7 +33,7 @@ function NavItem({
 
 export function BlueprintBottomNav() {
   return (
-    <nav className="flex h-16 shrink-0 items-center justify-around border-t bg-card px-2">
+    <nav className="flex h-16 shrink-0 items-center justify-around border-t bg-card safe-bottom px-2">
       <NavItem icon={Map} label="BLUEPRINT" active />
       <NavItem icon={ClipboardList} label="TASKS" disabled />
 

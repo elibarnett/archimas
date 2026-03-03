@@ -4,6 +4,8 @@ import { useState } from "react";
 import { FolderKanban } from "lucide-react";
 import { ProjectCard } from "@/components/project-card";
 import { EmptyState } from "@/components/empty-state";
+import { getSupabaseFileUrl } from "@/lib/utils";
+import { STORAGE_BUCKETS } from "@/lib/constants";
 import type { ProjectStatus } from "@/types/database";
 
 interface ProjectData {
@@ -14,6 +16,7 @@ interface ProjectData {
   status: ProjectStatus;
   cover_url: string | null;
   updated_at: string;
+  blueprints?: { file_path: string; mime_type: string | null }[];
 }
 
 interface ProjectTabsProps {
@@ -69,21 +72,35 @@ export function ProjectTabs({ projects }: ProjectTabsProps) {
       </div>
 
       {/* Project list */}
-      <div className="grid gap-4 px-4 pb-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 px-4 pb-6 md:grid-cols-2 xl:grid-cols-3">
         {filtered.length > 0 ? (
-          filtered.map((project) => (
-            <ProjectCard
-              key={project.id}
-              id={project.id}
-              name={project.name}
-              description={project.description}
-              address={project.address}
-              status={project.status as ProjectStatus}
-              cover_url={project.cover_url}
-              updated_at={project.updated_at}
-              pinCount={0}
-            />
-          ))
+          filtered.map((project) => {
+            const firstImageBp = project.blueprints?.find((bp) =>
+              bp.mime_type?.startsWith("image/")
+            );
+            const effectiveCoverUrl =
+              project.cover_url ??
+              (firstImageBp
+                ? getSupabaseFileUrl(
+                    STORAGE_BUCKETS.BLUEPRINTS,
+                    firstImageBp.file_path
+                  )
+                : null);
+
+            return (
+              <ProjectCard
+                key={project.id}
+                id={project.id}
+                name={project.name}
+                description={project.description}
+                address={project.address}
+                status={project.status as ProjectStatus}
+                cover_url={effectiveCoverUrl}
+                updated_at={project.updated_at}
+                pinCount={0}
+              />
+            );
+          })
         ) : (
           <EmptyState
             icon={FolderKanban}

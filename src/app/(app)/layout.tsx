@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { AppShellContent } from "@/components/app-shell-content";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function AppLayout({
@@ -10,8 +11,12 @@ export default function AppLayout({
   return (
     <TooltipProvider>
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>{children}</SidebarInset>
+        <div className="hidden md:contents">
+          <AppSidebar />
+        </div>
+        <SidebarInset>
+          <AppShellContent>{children}</AppShellContent>
+        </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
   );
