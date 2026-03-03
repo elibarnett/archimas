@@ -3,26 +3,34 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Stage, Layer, Image as KonvaImage } from "react-konva";
 import { useCanvasStore } from "@/stores/canvas-store";
+import { PinLayer } from "./pin-layer";
 import type Konva from "konva";
+import type { PinWithTags } from "@/types/database";
 
 interface BlueprintCanvasProps {
   imageUrl: string;
   width: number | null;
   height: number | null;
+  pins?: PinWithTags[];
+  filterTagId?: string | null;
+  onPinPlace?: (pos: { x: number; y: number }) => void;
 }
 
 export function BlueprintCanvas({
   imageUrl,
   width: imgWidth,
   height: imgHeight,
+  pins = [],
+  filterTagId,
+  onPinPlace,
 }: BlueprintCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [initialScale, setInitialScale] = useState(1);
+  const [, setInitialScale] = useState(1);
 
-  const { zoom, panX, panY, setZoom, setPan, setInitialViewport } =
+  const { zoom, panX, panY, activeTool, setZoom, setPan, setInitialViewport } =
     useCanvasStore();
 
   // Load image
@@ -111,8 +119,43 @@ export function BlueprintCanvas({
     [setPan]
   );
 
+  // Click-to-place pin
+  const handleStageClick = useCallback(
+    () => {
+      if (activeTool !== "pin" || !onPinPlace) return;
+
+      const stage = stageRef.current;
+      if (!stage) return;
+
+      const pointer = stage.getPointerPosition();
+      if (!pointer) return;
+
+      const iw = imgWidth ?? image?.naturalWidth ?? 0;
+      const ih = imgHeight ?? image?.naturalHeight ?? 0;
+      if (!iw || !ih) return;
+
+      // Convert screen coords to image coords
+      const imageX = (pointer.x - panX) / zoom;
+      const imageY = (pointer.y - panY) / zoom;
+
+      // Normalize to 0.0 - 1.0
+      const normalizedX = imageX / iw;
+      const normalizedY = imageY / ih;
+
+      // Validate within bounds
+      if (normalizedX < 0 || normalizedX > 1 || normalizedY < 0 || normalizedY > 1) {
+        return;
+      }
+
+      onPinPlace({ x: normalizedX, y: normalizedY });
+    },
+    [activeTool, onPinPlace, zoom, panX, panY, imgWidth, imgHeight, image]
+  );
+
   const iw = imgWidth ?? image?.naturalWidth ?? 0;
   const ih = imgHeight ?? image?.naturalHeight ?? 0;
+
+  const isPinMode = activeTool === "pin";
 
   return (
     <div ref={containerRef} className="h-full w-full">
@@ -125,14 +168,25 @@ export function BlueprintCanvas({
           scaleY={zoom}
           x={panX}
           y={panY}
-          draggable
+          draggable={!isPinMode}
           onWheel={handleWheel}
           onDragEnd={handleDragEnd}
-          className="cursor-grab active:cursor-grabbing"
+          onClick={handleStageClick}
+          onTap={handleStageClick}
+          className={isPinMode ? "cursor-crosshair" : "cursor-grab active:cursor-grabbing"}
         >
           <Layer>
             {image && <KonvaImage image={image} width={iw} height={ih} />}
           </Layer>
+
+          {pins.length > 0 && (
+            <PinLayer
+              pins={pins}
+              imageWidth={iw}
+              imageHeight={ih}
+              filterTagId={filterTagId}
+            />
+          )}
         </Stage>
       )}
     </div>

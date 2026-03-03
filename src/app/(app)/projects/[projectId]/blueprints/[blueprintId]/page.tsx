@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { BlueprintViewerShell } from "@/components/blueprint-viewer/blueprint-viewer-shell";
 import { createClient } from "@/lib/supabase/server";
+import type { PinWithTags, Tag } from "@/types/database";
 
 export async function generateMetadata({
   params,
@@ -29,7 +30,9 @@ export default async function BlueprintViewerPage({
   const [blueprintRes, tagsRes] = await Promise.all([
     supabase
       .from("blueprints")
-      .select("id, name, file_path, width, height, floor, updated_at, projects!inner(name)")
+      .select(
+        "id, name, file_path, width, height, floor, updated_at, projects!inner(name), pins(*, pin_tags(tags(*)))"
+      )
       .eq("id", blueprintId)
       .single(),
     supabase.from("tags").select("*").order("name"),
@@ -41,6 +44,13 @@ export default async function BlueprintViewerPage({
   const project = Array.isArray(blueprint.projects)
     ? blueprint.projects[0]
     : blueprint.projects;
+
+  // Flatten nested pin_tags(tags(*)) into PinWithTags[]
+  const pins: PinWithTags[] = (blueprint.pins ?? []).map((pin: Record<string, unknown>) => {
+    const pinTags = (pin.pin_tags as { tags: Tag }[] | undefined) ?? [];
+    const { pin_tags: _, ...pinData } = pin;
+    return { ...pinData, tags: pinTags.map((pt) => pt.tags) } as PinWithTags;
+  });
 
   return (
     <BlueprintViewerShell
@@ -56,6 +66,7 @@ export default async function BlueprintViewerPage({
       project={{ name: project?.name ?? "Project" }}
       projectId={projectId}
       tags={tagsRes.data ?? []}
+      pins={pins}
     />
   );
 }

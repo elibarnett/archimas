@@ -62,6 +62,8 @@ export interface Document {
   file_name: string;
   file_size: number | null;
   mime_type: string | null;
+  thumbnail_path: string | null;
+  captured_at: string | null;
   created_at: string;
   updated_at: string;
 }

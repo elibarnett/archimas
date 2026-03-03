@@ -6,14 +6,19 @@ import type { Tag } from "@/types/database";
 
 interface BlueprintTagFilterProps {
   tags: Tag[];
+  onTagFilter?: (tagId: string | null) => void;
 }
 
-export function BlueprintTagFilter({ tags }: BlueprintTagFilterProps) {
-  const [activeTagId, setActiveTagId] = useState<string | null>(
-    tags[0]?.id ?? null
-  );
+export function BlueprintTagFilter({ tags, onTagFilter }: BlueprintTagFilterProps) {
+  const [activeTagId, setActiveTagId] = useState<string | null>(null);
 
   if (tags.length === 0) return null;
+
+  function handleToggle(tagId: string) {
+    const newId = activeTagId === tagId ? null : tagId;
+    setActiveTagId(newId);
+    onTagFilter?.(newId);
+  }
 
   return (
     <div className="flex shrink-0 items-center gap-2 overflow-x-auto border-b bg-card px-4 py-2 scrollbar-none">
@@ -22,7 +27,7 @@ export function BlueprintTagFilter({ tags }: BlueprintTagFilterProps) {
         return (
           <button
             key={tag.id}
-            onClick={() => setActiveTagId(isActive ? null : tag.id)}
+            onClick={() => handleToggle(tag.id)}
             className={cn(
               "flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
               isActive

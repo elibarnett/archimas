@@ -1,8 +1,9 @@
 "use client";
 
-import { Map, ClipboardList, Layers, MoreHorizontal, Plus } from "lucide-react";
+import { Map, ClipboardList, Layers, MoreHorizontal, Plus, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCanvasStore } from "@/stores/canvas-store";
 import type { LucideIcon } from "lucide-react";
 
 function NavItem({
@@ -32,6 +33,19 @@ function NavItem({
 }
 
 export function BlueprintBottomNav() {
+  const activeTool = useCanvasStore((s) => s.activeTool);
+  const setActiveTool = useCanvasStore((s) => s.setActiveTool);
+
+  const isPinMode = activeTool === "pin";
+
+  function handleFabClick() {
+    if (isPinMode) {
+      setActiveTool("select");
+    } else {
+      setActiveTool("pin");
+    }
+  }
+
   return (
     <nav className="flex h-16 shrink-0 items-center justify-around border-t bg-card safe-bottom px-2">
       <NavItem icon={Map} label="BLUEPRINT" active />
@@ -41,10 +55,17 @@ export function BlueprintBottomNav() {
       <div className="relative -mt-6">
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full shadow-lg"
-          disabled
+          className={cn(
+            "h-14 w-14 rounded-full shadow-lg transition-colors",
+            isPinMode && "bg-destructive hover:bg-destructive/90"
+          )}
+          onClick={handleFabClick}
         >
-          <Plus className="h-6 w-6" />
+          {isPinMode ? (
+            <MapPin className="h-6 w-6" />
+          ) : (
+            <Plus className="h-6 w-6" />
+          )}
         </Button>
       </div>
 
