@@ -2,6 +2,7 @@ import { Search, Plus } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ProjectTabs } from "@/components/project-tabs";
+import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -27,12 +28,11 @@ export default async function ProjectsPage() {
           <Button variant="ghost" size="icon" className="h-9 w-9">
             <Search className="h-4 w-4" />
           </Button>
-          <Button
-            size="icon"
-            className="h-9 w-9 rounded-full"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+          <CreateProjectDialog>
+            <Button size="icon" className="h-9 w-9 rounded-full">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </CreateProjectDialog>
         </div>
       </header>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Pin, Clock } from "lucide-react";
 import { PROJECT_STATUS_CONFIG } from "@/lib/constants";
+import { ProjectCardActions } from "@/components/project-card-actions";
 import type { ProjectStatus } from "@/types/database";
 
 interface ProjectCardProps {
@@ -15,21 +16,7 @@ interface ProjectCardProps {
   pinSubLabel?: string;
 }
 
-function getRelativeTime(dateStr: string): string {
-  const now = new Date();
-  const date = new Date(dateStr);
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
+import { getRelativeTime } from "@/lib/utils";
 
 export function ProjectCard({
   id,
@@ -49,7 +36,10 @@ export function ProjectCard({
       className="group block overflow-hidden rounded-xl bg-card shadow-sm ring-1 ring-border/50 transition-shadow hover:shadow-md"
     >
       {/* Cover image */}
-      <div className="aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+        <div className="absolute top-2 right-2 z-10">
+          <ProjectCardActions projectId={id} projectName={name} status={status} />
+        </div>
         {cover_url ? (
           <img
             src={cover_url}

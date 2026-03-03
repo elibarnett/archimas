@@ -25,26 +25,6 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 
-const navItems = [
-  {
-    title: "Projects",
-    url: "/projects",
-    icon: FolderKanban,
-  },
-  {
-    title: "Blueprints",
-    url: "/projects", // Will be contextual once a project is selected
-    icon: Map,
-    disabled: true,
-  },
-  {
-    title: "Documents",
-    url: "/projects", // Will be contextual once a project is selected
-    icon: FileImage,
-    disabled: true,
-  },
-];
-
 const settingsItems = [
   {
     title: "Tags",
@@ -60,6 +40,35 @@ const settingsItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+
+  // Extract projectId from URL if inside a project scope
+  const projectMatch = pathname.match(/^\/projects\/([^/]+)/);
+  const currentProjectId = projectMatch?.[1];
+
+  const navItems = [
+    {
+      title: "Projects",
+      url: "/projects",
+      icon: FolderKanban,
+      disabled: false,
+    },
+    {
+      title: "Blueprints",
+      url: currentProjectId
+        ? `/projects/${currentProjectId}/blueprints`
+        : "/projects",
+      icon: Map,
+      disabled: !currentProjectId,
+    },
+    {
+      title: "Documents",
+      url: currentProjectId
+        ? `/projects/${currentProjectId}/documents`
+        : "/projects",
+      icon: FileImage,
+      disabled: !currentProjectId,
+    },
+  ];
 
   return (
     <Sidebar>
