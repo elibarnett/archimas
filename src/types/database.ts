@@ -4,7 +4,7 @@
 // types from `supabase gen types typescript` once schema stabilizes.
 // ============================================================
 
-export type ProjectStatus = "active" | "archived" | "completed";
+export type ProjectStatus = "planning" | "active" | "completed" | "archived";
 export type PinType = "note" | "issue" | "photo" | "measurement" | "safety";
 export type PinStatus = "open" | "in_progress" | "resolved" | "closed";
 

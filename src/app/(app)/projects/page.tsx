@@ -1,7 +1,7 @@
-import { FolderKanban } from "lucide-react";
-import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
+import { Search, Plus } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { ProjectTabs } from "@/components/project-tabs";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -16,45 +16,30 @@ export default async function ProjectsPage() {
     .order("updated_at", { ascending: false });
 
   return (
-    <>
-      <PageHeader title="Projects">
-        <Button size="sm">New Project</Button>
-      </PageHeader>
-      <div className="flex flex-1 flex-col p-4">
-        {projects && projects.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
-              <a
-                key={project.id}
-                href={`/projects/${project.id}`}
-                className="group rounded-lg border bg-card p-4 transition-colors hover:bg-accent"
-              >
-                <h3 className="font-medium group-hover:text-primary">
-                  {project.name}
-                </h3>
-                {project.description && (
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                    {project.description}
-                  </p>
-                )}
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                    {project.status}
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            icon={FolderKanban}
-            title="No projects yet"
-            description="Create your first project to start documenting your construction sites."
+    <div className="flex flex-1 flex-col">
+      {/* Header */}
+      <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4">
+        <div className="flex items-center gap-3">
+          <SidebarTrigger className="-ml-1" />
+          <span className="text-base font-semibold">Projects</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-9 w-9">
+            <Search className="h-4 w-4" />
+          </Button>
+          <Button
+            size="icon"
+            className="h-9 w-9 rounded-full"
           >
-            <Button>Create Project</Button>
-          </EmptyState>
-        )}
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
+
+      {/* Tabs + Content */}
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <ProjectTabs projects={projects ?? []} />
       </div>
-    </>
+    </div>
   );
 }

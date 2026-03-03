@@ -19,10 +19,22 @@ insert into public.tags (name, color, is_system) values
   ('General',       '#6b7280', true);   -- gray
 
 -- ============================================================
--- Sample Project (for development)
+-- Sample Projects (for development)
 -- ============================================================
 insert into public.projects (name, description, address, status) values
-  ('Harbor View Residence',
-   'New construction — 3-story residential building with underground parking',
-   '1234 Harbor View Dr, San Francisco, CA 94107',
-   'active');
+  ('Skyline Apartments',
+   'New construction — 12-story luxury apartment complex with rooftop amenities and underground parking. Phase 2 of 3 currently in progress.',
+   '123 Urban Ave, Downtown',
+   'active'),
+  ('Westside Medical Center',
+   'Major renovation of the radiology wing including new MRI suite, patient rooms, and nurse stations. Structural reinforcement required for equipment.',
+   '45 Health Blvd, West District',
+   'active'),
+  ('The Grand Library',
+   'Historic building restoration and modernization. Adding new reading halls, digital archives, and accessible entrances while preserving original facade.',
+   'Civic Plaza 1, North Side',
+   'planning'),
+  ('Riverside Office Tower',
+   'Completed 8-story commercial office building with LEED Gold certification. Final punch list items resolved.',
+   '900 River Rd, East Bank',
+   'completed');

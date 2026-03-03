@@ -15,9 +15,10 @@ export const PIN_TYPE_CONFIG = {
 
 /** Project status display configuration */
 export const PROJECT_STATUS_CONFIG = {
-  active: { label: "Active", color: "#22c55e" },
-  archived: { label: "Archived", color: "#78716c" },
-  completed: { label: "Completed", color: "#3b82f6" },
+  planning: { label: "Planning", color: "#6b7280", bg: "#f3f4f6" },
+  active: { label: "Active", color: "#16a34a", bg: "#dcfce7" },
+  completed: { label: "Completed", color: "#2563eb", bg: "#dbeafe" },
+  archived: { label: "Archived", color: "#6b7280", bg: "#f3f4f6" },
 } as const;
 
 /** File size limits in bytes */
